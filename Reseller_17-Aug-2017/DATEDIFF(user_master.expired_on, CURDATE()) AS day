@@ -1,0 +1,75 @@
+DATEDIFF(user_master.expired_on, CURDATE()) AS days_left
+
+
+
+select user_id,msgfrom,count(*) as testa,sum(CASE WHEN dlr_status='DELIVERED' THEN 1 ELSE 0 END ) as DL, sum(CASE WHEN dlr_status='FAILED' THEN 1 ELSE 0 END) as FL, sum(CASE WHEN dlr_status='' THEN 1 ELSE 0 END) as PEN from sms_log where cust_id='vipin' and date(created_on)= (curdate()) group by user_id,msgfrom
+
+
+
+
+
+
+select count(*) as testa,sum(CASE WHEN dlr_status='DELIVERED' THEN 1 ELSE 0 END ) as DL, sum(CASE WHEN dlr_status='FAILED' THEN 1 ELSE 0 END) as FL, sum(CASE WHEN dlr_status='' THEN 1 ELSE 0 END) as PEN from sms_log where cust_id='vipin' and date(created_on)= (curdate()) group by user_id,msgfrom
+
+
+select sms_log.user_id,sms_log.msgfrom,sms_log.created_on,user_master.expired_on from sms_log right join user_master on user_master.cust_id=sms_log.cust_id where sms_log.cust_id='vipin' and date(sms_log.created_on)=(curdate()) group by sms_log.user_id,sms_log.msgfrom
+
+
+//*************For Total Detail********************
+
+
+select dlr_status,count(*) as testa,sum(CASE WHEN dlr_status='DELIVERED' THEN 1 ELSE 0 END ) as DL, sum(CASE WHEN dlr_status='FAILED' THEN 1 ELSE 0 END) as FL, sum(CASE WHEN dlr_status='' THEN 1 ELSE 0 END) as PEN from sms_log where cust_id='vipin' and date(created_on)= (curdate())
+
+
+<table border="1">
+	<body>
+<?php 
+//error_reporting(0);
+$conn = mysqli_connect("localhost","root","","vipin");
+$query1 = mysqli_query($conn, "select sms_log.user_id,sms_log.msgfrom,sms_log.created_on,user_master.expired_on from sms_log right join user_master on user_master.cust_id=sms_log.cust_id where sms_log.cust_id='vipin' and date(sms_log.created_on)=(curdate()) group by sms_log.user_id,sms_log.msgfrom");
+//$query1 = mysqli_query($conn, "select sms_log.count(*) as testa,sum(CASE WHEN sms_log.dlr_status='DELIVERED' THEN 1 ELSE 0 END ) as Delivered, sum(CASE WHEN sms_log.dlr_status='FAILED' THEN 1 ELSE 0 END) as Failed, sum(CASE WHEN sms_log.dlr_status='' THEN 1 ELSE 0 END) as Pending from sms_log where sms_log.cust_id='vipin' and sms_log.date(created_on)= (curdate()) group by user_id,msgfrom");
+//$query2 = mysqli_query($conn, "select sms_log.user_id,sms_log.msgfrom,user_master.expired_on from sms_log FULL JOIN user_master on user_master.cust_id=sms_log.cust_id where sms_log.cust_id='vipin' and date(sms_log.created_on)=(curdate()) group by sms_log.user_id,sms_log.msgfrom");
+
+$query_array1 = array();
+// $query_array2 = array();
+// $query_array3 = array();
+
+while($resa = mysqli_fetch_array($query1))
+{
+	$query_array1[] = "<tr><td>".$resa['testa']."</td><td>".$resa['Delivered']."</td><td>".$resa['Failed']."</td><td>".$resa['Pending']."</td>";
+}
+// while($resb = mysqli_fetch_array($query2))
+// {
+//     $query_array2[] = "<td>".$resb['user_id']."</td><td>".$resb['msgfrom']."</td><td>".$resb['expired_on']."</td></tr>";
+// }
+//$query_array3 = array_merge($query_array1,$query_array2);
+// echo "<pre>";
+// print_r($query_array3);
+// echo "</pre>";
+foreach($query_array1 as $query_arrays1)
+{
+	echo $query_arrays1;
+}
+
+
+
+// $slice=explode(",", $user_data['Slice']); $val =explode(",", $user_data['Slice_percentage']); $c = array_combine($slice, $val); echo json_encode ($c);
+//*****************************
+// foreach (array_combine($codes, $names) as $code => $name)
+// {
+//     echo '<option value="' . $code . '">' . $name . '</option>';
+// }
+//*****************************
+// foreach( $codes as $index => $code ) {
+//    echo '<option value="' . $code . '">' . $names[$index] . '</option>';
+// }
+// Alternatively, it'd be much easier to make the codes the key of your $names array...
+
+// $names = array(
+//    'tn' => 'Tunisia',
+//    'us' => 'United States',
+//    ...
+// );
+?>
+</body>
+</table>
